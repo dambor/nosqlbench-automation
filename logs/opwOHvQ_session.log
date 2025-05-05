@@ -1,0 +1,20 @@
+2025-05-05 18:56:45,753 [main] INFO : Configured scenario log at logs/opwOHvQ_session.log
+2025-05-05 18:56:45,755 [main] INFO : Running NoSQLBench Version 5.21.5-release
+2025-05-05 18:56:45,755 [main] INFO : command-line: /Users/glenio.borges/workspace/nosqlbench-automation/yaml_files/pay_with_app_pending_reversal_by_id_1746471143.yaml host=127.0.0.1 localdc=datacenter1 keyspace= --progress console:1s
+2025-05-05 18:56:45,985 [main] INFO : client-hardware: {"heap-max-GiB":"12.00","processor-name":"Apple M4 Pro","memory-GiB":"48.00","sockets":"1","logical-cores":"12","max-frequency-ghz":"0.00","physical-cores":"12","if-speeds":["0Mib","5Mib"]}
+2025-05-05 18:56:46,083 [main] INFO : workload URI: 'file:///Users/glenio.borges/workspace/nosqlbench-automation/yaml_files/pay_with_app_pending_reversal_by_id_1746471143.yaml'
+2025-05-05 18:56:46,085 [main] WARN : <<key:value>> deprecated in       create_table1: 'CREATE TABLE if not exists <<keyspace:centralpayment>>.pay_with_app_pending_reversal_by_id
+2025-05-05 18:56:46,085 [main] WARN : <<key:value>> deprecated in       insert_rampup1: "insert into <<keyspace:centralpayment>>.pay_with_app_pending_reversal_by_id\
+2025-05-05 18:56:46,102 [main] ERROR: Could not recognize command 'keyspace='.
+This means that all of the following searches for a compatible command failed:
+1. commands: no scenario command named 'keyspace=' is known. (start, run, await, ...)
+2. scripts: no auto script named './scripts/auto/keyspace=.js' in the local filesystem.
+3. scripts: no auto script named 'scripts/auto/keyspace=.js' was found in the nb5 binary.
+4. workloads: no workload file named keyspace=[.yaml] was found in the local filesystem, even in include paths .
+5. workloads: no workload file named keyspace=[.yaml] was bundled in nb5 binary, even in include paths .
+6. apps: no application named keyspace= was bundled in nb5.
+
+You can discover available ways to invoke nb5 by using the various --list-* commands:
+[ --list-commands, --list-scripts, --list-workloads (and --list-scenarios), --list-apps ]
+
+2025-05-05 18:56:46,102 [main] ERROR: for the full stack trace, run with --show-stacktraces

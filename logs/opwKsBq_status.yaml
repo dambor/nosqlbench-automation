@@ -1,0 +1,11 @@
+labels:
+  jobname: nosqlbench
+  instance: default
+  node: 192.168.1.154
+  session: opwKsBq
+state: STOPPED
+started_at_epochms: 1746470296453
+session_time_ms: 4967
+heartbeat_interval_ms: 10000
+heartbeat_epoch_ms: 1746470301422
+substatus: []

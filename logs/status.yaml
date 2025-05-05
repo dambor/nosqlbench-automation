@@ -1,0 +1,11 @@
+labels:
+  jobname: nosqlbench
+  instance: default
+  node: 192.168.1.154
+  session: opwZoNy
+state: RUNNING
+started_at_epochms: 1746474212937
+session_time_ms: 3
+heartbeat_interval_ms: 10000
+heartbeat_epoch_ms: 1746474212941
+substatus: []

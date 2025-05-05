@@ -1,0 +1,7 @@
+2025-05-05 18:25:49,995 [main] INFO : Configured scenario log at logs/opwHCrv_session.log
+2025-05-05 18:25:49,996 [main] INFO : Running NoSQLBench Version 5.21.5-release
+2025-05-05 18:25:49,997 [main] INFO : command-line: /Users/glenio.borges/workspace/nosqlbench-automation/yaml_files/pay_with_app_pending_reversal_by_id_1746468705.yaml host=127.0.0.1 localdc=cassandra keyspace=centralpayment --progress console:1s
+2025-05-05 18:25:50,223 [main] INFO : client-hardware: {"sockets":"1","logical-cores":"12","max-frequency-ghz":"0.00","physical-cores":"12","if-speeds":["0Mib","139Mib"],"heap-max-GiB":"12.00","processor-name":"Apple M4 Pro","memory-GiB":"48.00"}
+2025-05-05 18:25:50,321 [main] INFO : workload URI: 'file:///Users/glenio.borges/workspace/nosqlbench-automation/yaml_files/pay_with_app_pending_reversal_by_id_1746468705.yaml'
+2025-05-05 18:25:50,335 [main] ERROR: class java.util.LinkedHashMap cannot be cast to class java.lang.String (java.util.LinkedHashMap and java.lang.String are in module java.base of loader 'bootstrap')
+2025-05-05 18:25:50,335 [main] ERROR: for the full stack trace, run with --show-stacktraces

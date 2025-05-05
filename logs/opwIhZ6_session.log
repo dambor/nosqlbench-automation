@@ -1,0 +1,7 @@
+2025-05-05 18:28:48,274 [main] INFO : Configured scenario log at logs/opwIhZ6_session.log
+2025-05-05 18:28:48,275 [main] INFO : Running NoSQLBench Version 5.21.5-release
+2025-05-05 18:28:48,276 [main] INFO : command-line: --version
+2025-05-05 18:28:48,493 [main] INFO : client-hardware: {"memory-GiB":"48.00","sockets":"1","logical-cores":"12","max-frequency-ghz":"0.00","physical-cores":"12","if-speeds":["0Mib","139Mib"],"heap-max-GiB":"12.00","processor-name":"Apple M4 Pro"}
+2025-05-05 18:28:48,497 [main] INFO : Configuring options for NBIO Cache
+2025-05-05 18:28:48,497 [main] INFO : Setting NBIO Cache Force Update to false
+2025-05-05 18:28:48,498 [main] INFO : Setting NBIO Cache Verify Checksum to true

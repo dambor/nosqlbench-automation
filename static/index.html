@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoSQLBench YAML Generator</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #1abc9c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--dark);
+            color: var(--light);
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 20px;
+        }
+        
+        nav ul li a {
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        form {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        textarea {
+            min-height: 150px;
+            font-family: monospace;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 2px solid var(--primary);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .output-yaml {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: inherit;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary);
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .connection-status {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .connected {
+            background-color: var(--secondary);
+        }
+        
+        .disconnected {
+            background-color: var(--danger);
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">NoSQLBench <span>YAML Generator</span></div>
+                <nav>
+                    <ul>
+                        <li><a href="#" class="tab-link active" data-tab="generator">Generator</a></li>
+                        <li><a href="#" class="tab-link" data-tab="connection">Database Connection</a></li>
+                        <li><a href="#" class="tab-link" data-tab="runner">Script Runner</a></li>
+                        <li><a href="#" class="tab-link" data-tab="about">About</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div id="generator" class="tab-content active">
+            <div class="card">
+                <h2>Generate NoSQLBench YAML from CQL Schema</h2>
+                <form id="schema-form">
+                    <div class="form-group">
+                        <label for="keyspace-name">Keyspace Name</label>
+                        <input type="text" id="keyspace-name" name="keyspace-name" placeholder="Enter keyspace name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cql-schema">CQL Schema</label>
+                        <textarea id="cql-schema" name="cql-schema" placeholder="Paste your CQL schema here (CREATE TABLE statements)" required></textarea>
+                        <div style="margin-top: 10px;">
+                            <label for="schema-file" class="btn" style="margin-right: 10px;">
+                                <span style="margin-right: 5px;">📁</span> Upload Schema File
+                            </label>
+                            <input type="file" id="schema-file" accept=".cql,.sql,.txt" style="display: none;">
+                            <span id="file-name" style="margin-left: 10px; font-style: italic;"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Data Generation Settings</label>
+                        <div class="form-group">
+                            <label for="num-cycles">Number of Cycles (Data Records)</label>
+                            <input type="number" id="num-cycles" name="num-cycles" value="10000000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="threads">Number of Threads</label>
+                            <select id="threads" name="threads">
+                                <option value="auto">Auto (Recommended)</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="4">4</option>
+                                <option value="8">8</option>
+                                <option value="16">16</option>
+                                <option value="32">32</option>
+                                <option value="64">64</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="generate-btn">Generate YAML</button>
+                    <button type="button" class="btn" id="load-example-btn" style="margin-left: 10px;">Load Example</button>
+                </form>
+            </div>
+            
+            <div class="card hidden" id="yaml-output-card">
+                <h2>Generated NoSQLBench YAML</h2>
+                <div id="yaml-tabs" class="tabs">
+                    <!-- Tabs will be dynamically generated -->
+                </div>
+                <div id="yaml-content">
+                    <!-- YAML content will be displayed here -->
+                </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <button class="btn btn-secondary" id="download-all-btn">Download All Files</button>
+                    <button class="btn" id="copy-current-btn">Copy Current YAML</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="connection" class="tab-content">
+            <div class="card">
+                <h2>Database Connection</h2>
+                <div id="connection-alerts"></div>
+                <form id="connection-form">
+                    <div class="form-group">
+                        <label for="db-type">Database Type</label>
+                        <select id="db-type" name="db-type">
+                            <option value="cassandra">Apache Cassandra</option>
+                            <option value="astra">DataStax Astra DB</option>
+                            <option value="dse">DataStax Enterprise (DSE)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="cassandra-fields">
+                        <div class="form-group">
+                            <label for="hosts">Host(s)</label>
+                            <input type="text" id="hosts" name="hosts" placeholder="127.0.0.1" value="127.0.0.1">
+                        </div>
+                        <div class="form-group">
+                            <label for="port">Port</label>
+                            <input type="number" id="port" name="port" placeholder="9042" value="9042">
+                        </div>
+                        <div class="form-group">
+                            <label for="datacenter">Local Datacenter</label>
+                            <input type="text" id="datacenter" name="datacenter" placeholder="datacenter1" value="datacenter1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" id="run-btn" style="font-size: 18px; padding: 12px 24px; margin-right: 10px;">
+                            <span style="margin-right: 8px;">▶</span> Run NoSQLBench Script
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="run-direct-btn" style="font-size: 18px; padding: 12px 24px;">
+                            <span style="margin-right: 8px;">⚡</span> Run Direct (Simple)
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn" id="diagnose-btn" style="margin-top: 10px;">
+                            <span style="margin-right: 5px;">🔍</span> Run Diagnostics
+                        </button>
+                        <button type="button" class="btn" id="test-run-btn" style="margin-top: 10px; margin-left: 10px;">
+                            <span style="margin-right: 5px;">🧪</span> Test Run
+                        </button>
+                    </div>
+                    <div id="astra-fields" class="hidden">
+                        <div class="form-group">
+                            <label for="astra-db-id">Astra DB ID</label>
+                            <input type="text" id="astra-db-id" name="astra-db-id" placeholder="Enter your Astra DB ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="astra-region">Astra Region</label>
+                            <input type="text" id="astra-region" name="astra-region" placeholder="us-east1">
+                        </div>
+                        <div class="form-group">
+                            <label for="astra-token">Astra Token</label>
+                            <input type="password" id="astra-token" name="astra-token" placeholder="Enter your Astra token">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username (if required)</label>
+                        <input type="text" id="username" name="username" placeholder="cassandra">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password (if required)</label>
+                        <input type="password" id="password" name="password" placeholder="cassandra">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" id="connect-btn">Connect</button>
+                    <span id="connection-status" class="hidden">
+                        <span class="connection-status disconnected"></span> Not Connected
+                    </span>
+                </form>
+            </div>
+        </div>
+        
+        <div id="runner" class="tab-content">
+            <div class="card">
+                <h2>NoSQLBench Script Runner</h2>
+                <div id="runner-alerts"></div>
+                <div id="connection-warning" class="alert alert-danger">
+                    Please connect to a database first from the Connection tab.
+                </div>
+                <div id="runner-content" class="hidden">
+                    <form id="runner-form">
+                        <div class="form-group">
+                            <label for="yaml-file">Select YAML File to Run</label>
+                            <select id="yaml-file" name="yaml-file" style="font-family: monospace;">
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="yaml-preview">YAML Preview (Editable)</label>
+                            <textarea class="output-yaml" id="yaml-preview" style="max-height: 300px; overflow-y: auto; width: 100%; font-family: monospace;">Select a YAML file to see preview</textarea>
+                            <div style="margin-top: 10px; text-align: right;">
+                                <button type="button" class="btn btn-secondary" id="save-yaml-btn">Save Changes</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="command-options">Additional Command Options</label>
+                            <input type="text" id="command-options" name="command-options" placeholder="E.g., write_cl=LOCAL_ONE threads=16" style="font-family: monospace;">
+                        </div>
+                        
+                        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                            <h4>Command Preview (Editable)</h4>
+                            <textarea id="command-preview" style="margin: 0; font-family: monospace; width: 100%; min-height: 100px;">java -jar nb5.jar [yaml-file] \
+                          host=[host] \
+                          localdc=[datacenter] \
+                          keyspace=[keyspace] \
+                          --progress console:1s</textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" id="run-btn" style="font-size: 18px; padding: 12px 24px;">
+                                <span style="margin-right: 8px;">▶</span> Run NoSQLBench Script
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div id="run-output" class="hidden">
+                        <h3>Execution Output</h3>
+                        <div class="output-yaml" id="execution-output" style="max-height: 400px; overflow-y: auto;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="about" class="tab-content">
+            <div class="card">
+                <h2>About NoSQLBench YAML Generator</h2>
+                <p>This tool helps Cassandra and DataStax users generate NoSQLBench YAML files from CQL schemas to benchmark and test Cassandra-based databases.</p>
+                <h3>Features:</h3>
+                <ul>
+                    <li>Convert CQL schema to NoSQLBench YAML</li>
+                    <li>Generate data binding configurations</li>
+                    <li>Connect to Cassandra, DSE, or Astra DB</li>
+                    <li>Execute NoSQLBench scripts directly from the application</li>
+                </ul>
+                <h3>How to Use:</h3>
+                <ol>
+                    <li>Input your CQL schema in the Generator tab</li>
+                    <li>Configure the database connection in the Connection tab</li>
+                    <li>Run the generated scripts in the Script Runner tab</li>
+                </ol>
+                <p>For more information about NoSQLBench, visit the <a href="https://docs.nosqlbench.io/" target="_blank">official documentation</a>.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Utility functions for alerts
+        function showAlert(containerId, type, message, autoHide = false) {
+            const container = document.getElementById(containerId);
+            
+            // Create alert
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            
+            // Add close button
+            const closeBtn = document.createElement('button');
+            closeBtn.type = 'button';
+            closeBtn.className = 'close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.addEventListener('click', () => alert.remove());
+            
+            // Add message
+            const messageText = document.createElement('span');
+            messageText.textContent = message;
+            
+            // Assemble alert
+            alert.appendChild(closeBtn);
+            alert.appendChild(messageText);
+            
+            // Add to container
+            container.prepend(alert);
+            
+            // Auto-hide if requested
+            if (autoHide) {
+                setTimeout(() => {
+                    alert.remove();
+                }, 5000);
+            }
+            
+            return alert;
+        }
+
+
+        // Save YAML changes
+        document.getElementById('save-yaml-btn').addEventListener('click', function() {
+            const yamlIndex = document.getElementById('yaml-file').value;
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            
+            if (yamlFiles.length === 0 || !yamlIndex) {
+                showAlert('runner-alerts', 'danger', 'No YAML file selected.');
+                return;
+            }
+            
+            const yamlContent = document.getElementById('yaml-preview').value;
+            if (!yamlContent) {
+                showAlert('runner-alerts', 'danger', 'YAML content cannot be empty.');
+                return;
+            }
+            
+            // Update the YAML content in session storage
+            yamlFiles[yamlIndex].content = yamlContent;
+            sessionStorage.setItem('yamlFiles', JSON.stringify(yamlFiles));
+            
+            // Update the YAML on the server
+            fetch('/api/update-yaml', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    yaml_id: yamlFiles[yamlIndex].id,
+                    content: yamlContent
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('runner-alerts', 'success', 'YAML file updated successfully!', true);
+                } else {
+                    showAlert('runner-alerts', 'danger', `Error updating YAML: ${data.error || 'Unknown error'}`);
+                }
+            })
+            .catch(error => {
+                showAlert('runner-alerts', 'danger', `Error communicating with the server: ${error.message}`);
+            });
+        });
+        // Handle file upload
+        document.getElementById('schema-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            // Show selected filename
+            document.getElementById('file-name').textContent = file.name;
+            
+            // Read file contents
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('cql-schema').value = event.target.result;
+                showAlert('generator', 'success', `File "${file.name}" loaded successfully!`, true);
+            };
+            reader.onerror = function() {
+                showAlert('generator', 'danger', 'Error reading the file.');
+            };
+            reader.readAsText(file);
+        });
+        
+        // Tab switching functionality
+        document.querySelectorAll('.tab-link').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                const tabId = this.getAttribute('data-tab');
+                
+                // Deactivate all tabs
+                document.querySelectorAll('.tab-link').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                
+                // Activate the selected tab
+                this.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Show/hide database type specific fields
+        document.getElementById('db-type').addEventListener('change', function() {
+            const dbType = this.value;
+            
+            if (dbType === 'astra') {
+                document.getElementById('cassandra-fields').classList.add('hidden');
+                document.getElementById('astra-fields').classList.remove('hidden');
+            } else {
+                document.getElementById('cassandra-fields').classList.remove('hidden');
+                document.getElementById('astra-fields').classList.add('hidden');
+            }
+        });
+        
+        // CQL to YAML conversion logic
+        document.getElementById('schema-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const keyspaceName = document.getElementById('keyspace-name').value;
+            const cqlSchema = document.getElementById('cql-schema').value;
+            const numCycles = document.getElementById('num-cycles').value;
+            const threads = document.getElementById('threads').value;
+            
+            if (!keyspaceName || !cqlSchema) {
+                showAlert('generator', 'danger', 'Please provide both keyspace name and CQL schema.');
+                return;
+            }
+            
+            // Show loading indicator
+            const generateBtn = document.getElementById('generate-btn');
+            const originalBtnText = generateBtn.textContent;
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            
+            // Make API call to generate YAML
+            fetch('/api/generate-yaml', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    keyspace: keyspaceName,
+                    schema: cqlSchema,
+                    cycles: numCycles,
+                    threads: threads
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Restore button
+                generateBtn.disabled = false;
+                generateBtn.textContent = originalBtnText;
+                
+                if (data.success) {
+                    // Store YAML files in session storage
+                    sessionStorage.setItem('yamlFiles', JSON.stringify(data.yaml_files));
+                    
+                    // Display generated YAML files
+                    displayYamlFiles(data.yaml_files);
+                    
+                    // Show the output card
+                    document.getElementById('yaml-output-card').classList.remove('hidden');
+                    
+                    // Show success message
+                    showAlert('generator', 'success', `Successfully generated ${data.yaml_files.length} YAML file(s).`, true);
+                } else {
+                    // Show error message
+                    showAlert('generator', 'danger', `Error generating YAML: ${data.error || 'Unknown error'}`);
+                }
+            })
+            .catch(error => {
+                // Restore button
+                generateBtn.disabled = false;
+                generateBtn.textContent = originalBtnText;
+                
+                // Show error message
+                showAlert('generator', 'danger', `Error: ${error.message}`);
+            });
+        });
+        // Direct execution button
+        document.getElementById('run-direct-btn').addEventListener('click', function() {
+            const yamlIndex = document.getElementById('yaml-file').value;
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            const keyspaceName = document.getElementById('keyspace-name').value;
+            
+            if (yamlFiles.length === 0) {
+                showAlert('runner-alerts', 'danger', 'Please generate YAML files first.');
+                return;
+            }
+            
+            const selectedYaml = yamlFiles[yamlIndex];
+            const outputDiv = document.getElementById('execution-output');
+            const runBtn = this;
+            
+            // Show output section
+            document.getElementById('run-output').classList.remove('hidden');
+            outputDiv.textContent = 'Running NoSQLBench script (direct execution)...\n';
+            
+            // Disable button during execution
+            runBtn.disabled = true;
+            runBtn.textContent = 'Running...';
+            
+            // Make direct API call
+            fetch('/api/run-nosqlbench-direct', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    yaml_id: selectedYaml.id,
+                    keyspace: keyspaceName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Re-enable button
+                runBtn.disabled = false;
+                runBtn.textContent = '⚡ Run Direct (Simple)';
+                
+                if (data.success) {
+                    outputDiv.textContent += `\nExecuted command:\n${data.command}\n\n`;
+                    
+                    if (data.timeout) {
+                        outputDiv.textContent += data.output + '\n\n';
+                        outputDiv.textContent += 'The command is still running in background. Check your database in a few minutes to see the results.\n';
+                    } else if (data.output) {
+                        outputDiv.textContent += data.output;
+                    } else {
+                        outputDiv.textContent += 'Command executed successfully, but no output was returned.\n';
+                    }
+                    
+                    showAlert('runner-alerts', 'success', 'NoSQLBench command executed!', true);
+                } else {
+                    outputDiv.textContent += `\nError executing command:\n${data.command}\n\n`;
+                    if (data.error) {
+                        outputDiv.textContent += `Error: ${data.error}\n`;
+                    }
+                    if (data.output) {
+                        outputDiv.textContent += `Output: ${data.output}\n`;
+                    }
+                    
+                    showAlert('runner-alerts', 'danger', 'Error executing NoSQLBench command.');
+                }
+                
+                // Scroll to bottom of output
+                outputDiv.scrollTop = outputDiv.scrollHeight;
+            })
+            .catch(error => {
+                runBtn.disabled = false;
+                runBtn.textContent = '⚡ Run Direct (Simple)';
+                
+                outputDiv.textContent += `\nError communicating with the server: ${error.message}\n`;
+                showAlert('runner-alerts', 'danger', `Error communicating with the server: ${error.message}`);
+            });
+        });
+        // Display generated YAML files
+        function displayYamlFiles(yamlFiles) {
+            const tabsContainer = document.getElementById('yaml-tabs');
+            const contentContainer = document.getElementById('yaml-content');
+            
+            // Clear existing tabs and content
+            tabsContainer.innerHTML = '';
+            contentContainer.innerHTML = '';
+            
+            // Create tabs and content for each YAML file
+            yamlFiles.forEach((file, index) => {
+                const tab = document.createElement('div');
+                tab.className = `tab${index === 0 ? ' active' : ''}`;
+                tab.textContent = file.name;
+                tab.setAttribute('data-index', index);
+                tabsContainer.appendChild(tab);
+                
+                const content = document.createElement('div');
+                content.className = `tab-content${index === 0 ? ' active' : ''}`;
+                content.id = `yaml-content-${index}`;
+                
+                const pre = document.createElement('pre');
+                pre.className = 'output-yaml';
+                pre.textContent = file.content;
+                content.appendChild(pre);
+                
+                contentContainer.appendChild(content);
+            });
+            
+            // Tab switching for YAML files
+            document.querySelectorAll('#yaml-tabs .tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const index = this.getAttribute('data-index');
+                    
+                    // Deactivate all tabs and content
+                    document.querySelectorAll('#yaml-tabs .tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('#yaml-content .tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Activate selected tab and content
+                    this.classList.add('active');
+                    document.getElementById(`yaml-content-${index}`).classList.add('active');
+                });
+            });
+            
+            // Populate the yaml selector in the runner tab
+            populateYamlFileSelector();
+        }
+        
+        // Connection form submission
+        document.getElementById('connection-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dbType = document.getElementById('db-type').value;
+            const connectionStatus = document.getElementById('connection-status');
+            const connectionStatusIndicator = connectionStatus.querySelector('.connection-status');
+            const connectBtn = document.getElementById('connect-btn');
+            
+            // Disable the button during connection attempt
+            connectBtn.disabled = true;
+            connectBtn.textContent = 'Connecting...';
+            
+            // Show connection status
+            connectionStatus.classList.remove('hidden');
+            connectionStatusIndicator.classList.remove('connected');
+            connectionStatusIndicator.classList.add('disconnected');
+            connectionStatus.innerHTML = '<span class="connection-status disconnected"></span> Connecting...';
+            
+            // Gather connection information
+            const connectionInfo = {
+                dbType: dbType,
+                host: document.getElementById('hosts').value,
+                port: document.getElementById('port').value,
+                datacenter: document.getElementById('datacenter').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+            
+            if (dbType === 'astra') {
+                connectionInfo.astraDbId = document.getElementById('astra-db-id').value;
+                connectionInfo.astraRegion = document.getElementById('astra-region').value;
+                connectionInfo.astraToken = document.getElementById('astra-token').value;
+            }
+            
+            // Make API call to connect to database
+            fetch('/api/connect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    type: dbType,
+                    hosts: connectionInfo.host,
+                    port: connectionInfo.port,
+                    datacenter: connectionInfo.datacenter,
+                    username: connectionInfo.username,
+                    password: connectionInfo.password,
+                    astra_db_id: connectionInfo.astraDbId,
+                    astra_region: connectionInfo.astraRegion,
+                    astra_token: connectionInfo.astraToken
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Connection successful
+                    connectionStatusIndicator.classList.remove('disconnected');
+                    connectionStatusIndicator.classList.add('connected');
+                    connectionStatus.innerHTML = '<span class="connection-status connected"></span> Connected';
+                    
+                    // Store connection info with the ID from the server
+                    connectionInfo.connected = true;
+                    connectionInfo.connectionId = data.connection_id;
+                    sessionStorage.setItem('connectionInfo', JSON.stringify(connectionInfo));
+                    
+                    // Update runner tab
+                    document.getElementById('connection-warning').classList.add('hidden');
+                    document.getElementById('runner-content').classList.remove('hidden');
+                    
+                    // Restore button
+                    connectBtn.disabled = false;
+                    connectBtn.textContent = 'Connect';
+                    
+                    // Show success message
+                    showAlert('connection-alerts', 'success', `Successfully connected to ${dbType === 'astra' ? 'Astra DB' : 'Cassandra/DSE'} at ${connectionInfo.host || connectionInfo.astraDbId}`);
+                    
+                    // Populate the yaml selector in the runner tab
+                    populateYamlFileSelector();
+                    
+                    // Update command preview
+                    updateCommandPreview();
+                    
+                    // Ask to switch to runner tab
+                    setTimeout(() => {
+                        if (confirm('Connection successful! Would you like to switch to the Script Runner tab?')) {
+                            document.querySelector('.tab-link[data-tab="runner"]').click();
+                        }
+                    }, 500);
+                } else {
+                    // Connection failed
+                    connectionStatusIndicator.classList.remove('connected');
+                    connectionStatusIndicator.classList.add('disconnected');
+                    connectionStatus.innerHTML = '<span class="connection-status disconnected"></span> Connection Failed';
+                    
+                    // Show error message
+                    showAlert('connection-alerts', 'danger', `Connection failed: ${data.error || 'Unknown error'}`);
+                    
+                    // Restore button
+                    connectBtn.disabled = false;
+                    connectBtn.textContent = 'Connect';
+                }
+            })
+            .catch(error => {
+                // Connection error
+                connectionStatusIndicator.classList.remove('connected');
+                connectionStatusIndicator.classList.add('disconnected');
+                connectionStatus.innerHTML = '<span class="connection-status disconnected"></span> Connection Error';
+                
+                // Show error message
+                showAlert('connection-alerts', 'danger', `Error connecting to server: ${error.message}`);
+                
+                // Restore button
+                connectBtn.disabled = false;
+                connectBtn.textContent = 'Connect';
+            });
+        });
+        
+        // Populate YAML file selector in the runner tab
+        function populateYamlFileSelector() {
+            const selector = document.getElementById('yaml-file');
+            if (!selector) return;
+            
+            selector.innerHTML = '';
+            
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            
+            if (yamlFiles.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = '-- No YAML files generated yet --';
+                selector.appendChild(option);
+                return;
+            }
+            
+            yamlFiles.forEach((file, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = file.name;
+                selector.appendChild(option);
+            });
+            
+            // Update preview for the first file
+            updateYamlPreview(0);
+            updateCommandPreview();
+        }
+        
+        // Update YAML preview when a file is selected
+        function updateYamlPreview(index) {
+            const yamlPreview = document.getElementById('yaml-preview');
+            if (!yamlPreview) return;
+            
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            
+            if (yamlFiles.length === 0 || index === undefined) {
+                yamlPreview.value = 'No YAML file selected';
+                return;
+            }
+            
+            const selectedYaml = yamlFiles[index];
+            if (!selectedYaml) {
+                yamlPreview.value = 'No YAML file selected';
+                return;
+            }
+            
+            // Show full content in editable textarea
+            yamlPreview.value = selectedYaml.content;
+        }
+        // Update command preview
+        function updateCommandPreview() {
+            const commandPreview = document.getElementById('command-preview');
+            if (!commandPreview) return;
+            
+            const yamlSelector = document.getElementById('yaml-file');
+            const commandOptions = document.getElementById('command-options');
+            const keyspaceName = document.getElementById('keyspace-name');
+            
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            const connectionInfo = JSON.parse(sessionStorage.getItem('connectionInfo') || '{}');
+            
+            let yamlFileName = '[yaml-file]';
+            if (yamlFiles.length > 0 && yamlSelector.value) {
+                const selectedYaml = yamlFiles[yamlSelector.value];
+                if (selectedYaml) {
+                    yamlFileName = `./yaml_files/${selectedYaml.name}`;
+                }
+            }
+            
+            const host = connectionInfo.host || '[host]';
+            const datacenter = connectionInfo.datacenter || '[datacenter]';
+            const keyspace = keyspaceName.value || '[keyspace]';
+            const options = commandOptions.value ? `${commandOptions.value}` : '';
+            
+            commandPreview.textContent = `java -jar nb5.jar ${yamlFileName} \\
+        host=${host} \\
+        localdc=${datacenter} \\
+        keyspace=${keyspace} \\
+        --progress console:1s ${options}`;
+        }
+        
+        // Add event listeners for updating previews
+        if (document.getElementById('yaml-file')) {
+            document.getElementById('yaml-file').addEventListener('change', function() {
+                updateYamlPreview(this.value);
+                updateCommandPreview();
+            });
+        }
+        
+        if (document.getElementById('command-options')) {
+            document.getElementById('command-options').addEventListener('input', updateCommandPreview);
+        }
+        
+        if (document.getElementById('keyspace-name')) {
+            document.getElementById('keyspace-name').addEventListener('input', updateCommandPreview);
+        }
+        
+        // Runner form submission
+        document.getElementById('runner-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const yamlIndex = document.getElementById('yaml-file').value;
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            const connectionInfo = JSON.parse(sessionStorage.getItem('connectionInfo') || '{}');
+            const keyspaceName = document.getElementById('keyspace-name').value;
+            
+            if (yamlFiles.length === 0) {
+                showAlert('runner-alerts', 'danger', 'Please generate YAML files first.');
+                return;
+            }
+            
+            if (!connectionInfo.connectionId) {
+                showAlert('runner-alerts', 'danger', 'Please connect to a database first.');
+                return;
+            }
+            
+            const selectedYaml = yamlFiles[yamlIndex];
+            const outputDiv = document.getElementById('execution-output');
+            const runBtn = document.getElementById('run-btn');
+            
+            // Show output section
+            document.getElementById('run-output').classList.remove('hidden');
+            outputDiv.textContent = 'Running NoSQLBench script...\n';
+            
+            // Disable the run button during execution
+            runBtn.disabled = true;
+            runBtn.textContent = 'Running...';
+            
+            // Get the command from the editable command preview
+            const command = document.getElementById('command-preview').value;
+            
+            outputDiv.textContent += `\nExecuting command:\n${command}\n\n`;
+            
+            // Extract command information
+            // This is a simplified parsing - in a real application, you might need more robust parsing
+            let cmdYamlPath = '';
+            let cmdKeyspace = keyspaceName;
+            let cmdOptions = '';
+            
+            const cmdLines = command.split('\n');
+            const mainCmdLine = cmdLines[0];
+            const parts = mainCmdLine.split(' ');
+            
+            // Find the YAML path
+            for (let i = 0; i < parts.length; i++) {
+                if (parts[i].endsWith('.yaml')) {
+                    cmdYamlPath = parts[i];
+                    break;
+                }
+            }
+            
+            // Find keyspace from the command
+            for (let i = 0; i < cmdLines.length; i++) {
+                const line = cmdLines[i];
+                if (line.trim().startsWith('keyspace=')) {
+                    cmdKeyspace = line.trim().split('=')[1];
+                }
+            }
+            
+            // Make API call to run NoSQLBench script
+            fetch('/api/run-nosqlbench', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    yaml_id: selectedYaml.id,
+                    yaml_name: cmdYamlPath,
+                    connection_id: connectionInfo.connectionId,
+                    keyspace: cmdKeyspace,
+                    command: command, // Send the full command as well
+                    options: cmdOptions
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Rest of the code remains the same
+            })
+            .catch(error => {
+                // Rest of the code remains the same
+            });
+        });
+
+        // Function to poll process status
+        function pollProcessStatus(processId, outputDiv, runBtn) {
+            let pollCount = 0;
+            const maxPolls = 300; // 5 minutes at 1-second intervals
+            
+            function poll() {
+                fetch(`/api/process/${processId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update output area with current output
+                            if (data.output) {
+                                outputDiv.textContent = data.output;
+                            }
+                            
+                            // Add error output if any
+                            if (data.error && data.error.trim() !== '') {
+                                outputDiv.textContent += '\n\nErrors:\n' + data.error;
+                            }
+                            
+                            // Scroll to bottom
+                            outputDiv.scrollTop = outputDiv.scrollHeight;
+                            
+                            // Check if process is still running
+                            if (data.status === 'running' && pollCount < maxPolls) {
+                                // Continue polling
+                                pollCount++;
+                                setTimeout(poll, 1000);
+                            } else {
+                                // Process completed or timed out
+                                if (data.status === 'completed') {
+                                    outputDiv.textContent += '\n\nProcess completed successfully!';
+                                    showAlert('runner-alerts', 'success', 'NoSQLBench script completed successfully.');
+                                } else if (data.status === 'failed') {
+                                    outputDiv.textContent += '\n\nProcess failed.';
+                                    showAlert('runner-alerts', 'danger', 'NoSQLBench script failed.');
+                                } else {
+                                    outputDiv.textContent += '\n\nProcess monitoring timed out after 5 minutes.';
+                                }
+                                
+                                // Re-enable run button
+                                runBtn.disabled = false;
+                                runBtn.textContent = '▶ Run NoSQLBench Script';
+                            }
+                        } else {
+                            // Error checking status
+                            outputDiv.textContent += `\n\nError checking process status: ${data.error || 'Unknown error'}\n`;
+                            runBtn.disabled = false;
+                            runBtn.textContent = '▶ Run NoSQLBench Script';
+                        }
+                    })
+                    .catch(error => {
+                        outputDiv.textContent += `\n\nError polling for status: ${error.message}\n`;
+                        runBtn.disabled = false;
+                        runBtn.textContent = '▶ Run NoSQLBench Script';
+                    });
+            }
+            
+            // Start polling
+            poll();
+        }
+
+        // Diagnostic button
+        document.getElementById('diagnose-btn').addEventListener('click', function() {
+            const outputDiv = document.getElementById('execution-output');
+            document.getElementById('run-output').classList.remove('hidden');
+            outputDiv.textContent = 'Running diagnostics...\n';
+            
+            fetch('/api/diagnose')
+                .then(response => response.json())
+                .then(data => {
+                    outputDiv.textContent = 'Diagnostic Results:\n\n';
+                    outputDiv.textContent += JSON.stringify(data, null, 2);
+                    
+                    if (!data.nb_jar_exists) {
+                        showAlert('runner-alerts', 'danger', 'NoSQLBench JAR file not found! Please make sure nb5.jar is in the correct location.');
+                    } else if (data.yaml_files_count === 0) {
+                        showAlert('runner-alerts', 'danger', 'No YAML files found! Please generate YAML files first.');
+                    } else if (data.java_error) {
+                        showAlert('runner-alerts', 'danger', 'Java not found or not working properly.');
+                    } else if (data.nb_test === false) {
+                        showAlert('runner-alerts', 'danger', 'NoSQLBench test failed. See diagnostic output for details.');
+                    } else {
+                        showAlert('runner-alerts', 'success', 'Diagnostics completed successfully!', true);
+                    }
+                })
+                .catch(error => {
+                    outputDiv.textContent += `\nError running diagnostics: ${error.message}\n`;
+                    showAlert('runner-alerts', 'danger', `Error running diagnostics: ${error.message}`);
+                });
+        });
+
+        // Test run button
+        document.getElementById('test-run-btn').addEventListener('click', function() {
+            const yamlIndex = document.getElementById('yaml-file').value;
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            const keyspaceName = document.getElementById('keyspace-name').value;
+            
+            if (yamlFiles.length === 0) {
+                showAlert('runner-alerts', 'danger', 'Please generate YAML files first.');
+                return;
+            }
+            
+            const selectedYaml = yamlFiles[yamlIndex];
+            const outputDiv = document.getElementById('execution-output');
+            
+            // Show output section
+            document.getElementById('run-output').classList.remove('hidden');
+            outputDiv.textContent = 'Running test...\n';
+            
+            fetch('/api/run-test', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    yaml_name: selectedYaml.name,
+                    keyspace: keyspaceName
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                outputDiv.textContent = 'Test Run Results:\n\n';
+                outputDiv.textContent += `Command: ${data.command}\n\n`;
+                
+                if (data.stdout) {
+                    outputDiv.textContent += 'Output:\n' + data.stdout + '\n\n';
+                }
+                
+                if (data.stderr) {
+                    outputDiv.textContent += 'Error Output:\n' + data.stderr + '\n\n';
+                }
+                
+                if (data.success) {
+                    outputDiv.textContent += 'Test completed successfully!\n';
+                    showAlert('runner-alerts', 'success', 'Test run completed successfully!', true);
+                } else if (data.timeout) {
+                    outputDiv.textContent += 'Test is still running (timeout).\n';
+                    showAlert('runner-alerts', 'warning', 'Test is still running.', true);
+                } else {
+                    outputDiv.textContent += `Test failed with return code ${data.returncode}.\n`;
+                    showAlert('runner-alerts', 'danger', 'Test run failed. See output for details.');
+                }
+                
+                // Display detailed diagnostic info
+                outputDiv.textContent += '\nDetailed Information:\n';
+                outputDiv.textContent += `Working Directory: ${data.cwd}\n`;
+                outputDiv.textContent += `YAML Path: ${data.yaml_path}\n`;
+                outputDiv.textContent += `JAR Path: ${data.nb_jar_path}\n`;
+            })
+            .catch(error => {
+                outputDiv.textContent += `\nError running test: ${error.message}\n`;
+                showAlert('runner-alerts', 'danger', `Error running test: ${error.message}`);
+            });
+        });
+        
+        // Function to simulate NoSQLBench output
+        function simulateNbOutput() {
+            return `NoSQLBench version 5.17.3\n
+cycle rate: 6314 ops/second (1m avg) for 10000000 cycles\n
+cycle rate: 9843 ops/second (1m avg) for 20000000 cycles\n
+cycle rate: 11573 ops/second (1m avg) for 30000000 cycles\n
+cycle rate: 12421 ops/second (1m avg) for 40000000 cycles\n
+stats:
+        op: insert_data
+           tries: 10000000 successes: 10000000 errors: 0
+           min: 0.12ms max: 42.7ms avg: 3.5ms
+        service time: 95%: 8.2ms 99%: 14.6ms 99.9%: 22.8ms
+
+Completed in 1m 53s at 8845 ops/second\n`;
+        }
+        
+        // Copy current YAML to clipboard
+        document.getElementById('copy-current-btn').addEventListener('click', function() {
+            const activeTabContent = document.querySelector('#yaml-content .tab-content.active pre');
+            if (!activeTabContent) return;
+            
+            navigator.clipboard.writeText(activeTabContent.textContent)
+                .then(() => {
+                    showAlert('generator', 'success', 'YAML copied to clipboard!', true);
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    showAlert('generator', 'danger', 'Failed to copy text. Please try manually selecting and copying.');
+                });
+        });
+        
+        // Download all YAML files
+        document.getElementById('download-all-btn').addEventListener('click', function() {
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            
+            if (yamlFiles.length === 0) {
+                showAlert('generator', 'danger', 'No YAML files to download.');
+                return;
+            }
+            // Make API call to download all files
+            window.location.href = '/api/download-all';
+        });
+        
+        // Check for connection status when runner tab is clicked
+        document.querySelector('.tab-link[data-tab="runner"]').addEventListener('click', function() {
+            const connectionInfo = JSON.parse(sessionStorage.getItem('connectionInfo') || '{}');
+            
+            if (connectionInfo.connectionId) {
+                document.getElementById('connection-warning').classList.add('hidden');
+                document.getElementById('runner-content').classList.remove('hidden');
+            } else {
+                document.getElementById('connection-warning').classList.remove('hidden');
+                document.getElementById('runner-content').classList.add('hidden');
+            }
+            
+            // Repopulate YAML selector
+            populateYamlFileSelector();
+        });
+        
+        // Load example CQL schema
+        document.getElementById('load-example-btn').addEventListener('click', function() {
+            const exampleSchema = `CREATE TABLE centralpayment.pay_with_app_purchase_request_by_id (
+    sessionid text,
+    insertedtimestamp timestamp,
+    amount decimal,
+    fraudcheckisrequested boolean,
+    fsaamount decimal,
+    fsarxamount decimal,
+    giftcardeligibleamount decimal,
+    lanenumber text,
+    ordertotal decimal,
+    salestaxamount decimal,
+    storenumber text,
+    transactiondate timestamp,
+    PRIMARY KEY (sessionid, insertedtimestamp)
+) WITH CLUSTERING ORDER BY (insertedtimestamp DESC);
+
+CREATE TABLE centralpayment.transaction_by_id (
+    transactionid text,
+    amount decimal,
+    cardtype text,
+    processeddate timestamp,
+    status text,
+    storenumber text,
+    PRIMARY KEY (transactionid)
+);`;
+            
+            document.getElementById('keyspace-name').value = 'centralpayment';
+            document.getElementById('cql-schema').value = exampleSchema;
+            
+            showAlert('generator', 'success', 'Example CQL schema loaded!', true);
+        });
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there are stored YAML files
+            const yamlFiles = JSON.parse(sessionStorage.getItem('yamlFiles') || '[]');
+            if (yamlFiles.length > 0) {
+                displayYamlFiles(yamlFiles);
+                document.getElementById('yaml-output-card').classList.remove('hidden');
+            }
+            
+            // Check if there is a stored connection
+            const connectionInfo = JSON.parse(sessionStorage.getItem('connectionInfo') || '{}');
+            if (connectionInfo.connectionId) {
+                const connectionStatus = document.getElementById('connection-status');
+                connectionStatus.classList.remove('hidden');
+                connectionStatus.innerHTML = '<span class="connection-status connected"></span> Connected';
+                
+                // Update runner tab
+                document.getElementById('connection-warning').classList.add('hidden');
+                document.getElementById('runner-content').classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
