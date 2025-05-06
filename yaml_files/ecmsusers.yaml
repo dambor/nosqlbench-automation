@@ -1,0 +1,51 @@
+scenarios:
+  default:
+    schema1: run driver=cql tags=block:"schema.*" threads===UNDEF cycles==UNDEF
+    rampup1: run driver=cql tags='block:rampup1' cycles===TEMPLATE(rampup-cycles,10000000)
+      threads=auto
+bindings:
+  ecmsid: Add(1); ToBigInt()
+  lastname: AlphaNumericString(10)
+  zipcode: Add(1); ToInt()
+  email: AlphaNumericString(10)
+  firstname: AlphaNumericString(10)
+  id2: Add(1); ToInt()
+  password: AlphaNumericString(10)
+  phonenumber: AlphaNumericString(10)
+blocks:
+  schema1:
+    params:
+      prepared: false
+    ops:
+      create_table1: 'CREATE TABLE if not exists <<keyspace:centralpayment>>.ecmsusers
+        (
+
+        ecmsid bigint,
+
+        lastname text,
+
+        zipcode int,
+
+        email text,
+
+        firstname text,
+
+        id2 int,
+
+        password text,
+
+        phonenumber text,
+
+        PRIMARY KEY (ecmsid,lastname,zipcode)
+
+        ) WITH CLUSTERING ORDER BY (insertedtimestamp DESC);'
+  rampup1:
+    params:
+      cl: TEMPLATE(write_cl,LOCAL_QUORUM)
+      instrument: true
+      prepared: true
+    ops:
+      insert_rampup1: "insert into <<keyspace:centralpayment>>.ecmsusers (\necmsid,\n\
+        lastname,\nzipcode,\nemail,\nfirstname,\nid2,\npassword,\nphonenumber\n) values\
+        \ \n(\n{ecmsid},\n{lastname},\n{zipcode},\n{email},\n{firstname},\n{id2},\n\
+        {password},\n{phonenumber}\n);"

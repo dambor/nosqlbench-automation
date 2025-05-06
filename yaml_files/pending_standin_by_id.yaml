@@ -1,0 +1,134 @@
+scenarios:
+  default:
+    schema1: run driver=cql tags=block:"schema.*" threads===UNDEF cycles==UNDEF
+    rampup1: run driver=cql tags='block:rampup1' cycles===TEMPLATE(rampup-cycles,10000000)
+      threads=auto
+bindings:
+  transactionid: ToHashedUUID()
+  insertedtimestamp: AddHashRange(0,2419200000L); StartingEpochMillis('2025-01-01
+    05:00:00'); ToJavaInstant()
+  attendance: AlphaNumericString(10)
+  authorizationcode: AlphaNumericString(10)
+  cardcapturecapability: AlphaNumericString(10)
+  carddataformat: AlphaNumericString(10)
+  cardholderidmethod: AlphaNumericString(10)
+  cardholderpresence: AlphaNumericString(10)
+  cardpresence: AlphaNumericString(10)
+  conditioncode: AlphaNumericString(10)
+  currencycode: AlphaNumericString(10)
+  dukptksn: AlphaNumericString(10)
+  emvterminaldata: AlphaNumericString(10)
+  encryptedcarddata: AlphaNumericString(10)
+  entrymode: AlphaNumericString(10)
+  localtimestampoffset: Add(1.0); ToDouble()
+  locationindicator: AlphaNumericString(10)
+  operatorid: AlphaNumericString(10)
+  orderid: AlphaNumericString(10)
+  originatingentityid: AlphaNumericString(10)
+  partialauthcapability: AlphaNumericString(10)
+  pinentrycapability: AlphaNumericString(10)
+  requestedamount: Add(1.0); ToBigDecimal()
+  salestaxamount: Add(1.0); ToBigDecimal()
+  sequencenumber: Add(1); ToBigInt()
+  tendertype: AlphaNumericString(10)
+  terminalentrycapability: AlphaNumericString(10)
+  terminaltype: AlphaNumericString(10)
+  tracenumber: Add(1); ToInt()
+  transactiontimestamputc: AddHashRange(0,2419200000L); StartingEpochMillis('2025-01-01
+    05:00:00'); ToJavaInstant()
+  emvtags: AlphaNumericString(10)
+blocks:
+  schema1:
+    params:
+      prepared: false
+    ops:
+      create_table1: 'CREATE TABLE if not exists <<keyspace:centralpayment>>.pending_standin_by_id
+        (
+
+        transactionid uuid,
+
+        insertedtimestamp timestamp,
+
+        attendance text,
+
+        authorizationcode text,
+
+        cardcapturecapability text,
+
+        carddataformat text,
+
+        cardholderidmethod text,
+
+        cardholderpresence text,
+
+        cardpresence text,
+
+        conditioncode text,
+
+        currencycode text,
+
+        dukptksn text,
+
+        emvterminaldata text,
+
+        encryptedcarddata text,
+
+        entrymode text,
+
+        localtimestampoffset double,
+
+        locationindicator text,
+
+        operatorid text,
+
+        orderid text,
+
+        originatingentityid text,
+
+        partialauthcapability text,
+
+        pinentrycapability text,
+
+        requestedamount decimal,
+
+        salestaxamount decimal,
+
+        sequencenumber bigint,
+
+        tendertype text,
+
+        terminalentrycapability text,
+
+        terminaltype text,
+
+        tracenumber int,
+
+        transactiontimestamputc timestamp,
+
+        emvtags map<text,
+
+        PRIMARY KEY (transactionid,insertedtimestamp)
+
+        ) WITH CLUSTERING ORDER BY (insertedtimestamp DESC);'
+  rampup1:
+    params:
+      cl: TEMPLATE(write_cl,LOCAL_QUORUM)
+      instrument: true
+      prepared: true
+    ops:
+      insert_rampup1: "insert into <<keyspace:centralpayment>>.pending_standin_by_id\
+        \ (\ntransactionid,\ninsertedtimestamp,\nattendance,\nauthorizationcode,\n\
+        cardcapturecapability,\ncarddataformat,\ncardholderidmethod,\ncardholderpresence,\n\
+        cardpresence,\nconditioncode,\ncurrencycode,\ndukptksn,\nemvterminaldata,\n\
+        encryptedcarddata,\nentrymode,\nlocaltimestampoffset,\nlocationindicator,\n\
+        operatorid,\norderid,\noriginatingentityid,\npartialauthcapability,\npinentrycapability,\n\
+        requestedamount,\nsalestaxamount,\nsequencenumber,\ntendertype,\nterminalentrycapability,\n\
+        terminaltype,\ntracenumber,\ntransactiontimestamputc,\nemvtags\n) values \n\
+        (\n{transactionid},\n{insertedtimestamp},\n{attendance},\n{authorizationcode},\n\
+        {cardcapturecapability},\n{carddataformat},\n{cardholderidmethod},\n{cardholderpresence},\n\
+        {cardpresence},\n{conditioncode},\n{currencycode},\n{dukptksn},\n{emvterminaldata},\n\
+        {encryptedcarddata},\n{entrymode},\n{localtimestampoffset},\n{locationindicator},\n\
+        {operatorid},\n{orderid},\n{originatingentityid},\n{partialauthcapability},\n\
+        {pinentrycapability},\n{requestedamount},\n{salestaxamount},\n{sequencenumber},\n\
+        {tendertype},\n{terminalentrycapability},\n{terminaltype},\n{tracenumber},\n\
+        {transactiontimestamputc},\n{emvtags}\n);"

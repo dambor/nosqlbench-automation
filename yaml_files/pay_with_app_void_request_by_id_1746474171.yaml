@@ -1,0 +1,40 @@
+scenarios:
+  default:
+    schema1: run driver=cql tags=block:"schema.*" threads===UNDEF cycles==UNDEF
+    rampup1: run driver=cql tags='block:rampup1' cycles===TEMPLATE(rampup-cycles,10000000)
+      threads=auto
+bindings:
+  transactionreferenceid: AlphaNumericString(10)
+  insertedtimestamp: AddHashRange(0,2419200000L); StartingEpochMillis('2025-01-01
+    05:00:00'); ToJavaInstant()
+  reasoncode: Add(1); ToInt()
+  sessionid: ToHashedUUID()
+blocks:
+  schema1:
+    params:
+      prepared: false
+    ops:
+      create_table1: 'CREATE TABLE if not exists <<keyspace:centralpayment>>.pay_with_app_void_request_by_id
+        (
+
+        transactionreferenceid text,
+
+        insertedtimestamp timestamp,
+
+        reasoncode int,
+
+        sessionid uuid,
+
+        PRIMARY KEY (transactionreferenceid,insertedtimestamp)
+
+        ) WITH CLUSTERING ORDER BY (insertedtimestamp DESC);'
+  rampup1:
+    params:
+      cl: TEMPLATE(write_cl,LOCAL_QUORUM)
+      instrument: true
+      prepared: true
+    ops:
+      insert_rampup1: "insert into <<keyspace:centralpayment>>.pay_with_app_void_request_by_id\
+        \ (\ntransactionreferenceid,\ninsertedtimestamp,\nreasoncode,\nsessionid\n\
+        ) values \n(\n{transactionreferenceid},\n{insertedtimestamp},\n{reasoncode},\n\
+        {sessionid}\n);"

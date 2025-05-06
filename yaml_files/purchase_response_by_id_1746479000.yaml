@@ -1,0 +1,54 @@
+scenarios:
+  default:
+    schema1: run driver=cql tags=block:"schema.*" threads===UNDEF cycles==UNDEF
+    rampup1: run driver=cql tags='block:rampup1' cycles===TEMPLATE(rampup-cycles,10000000)
+      threads=auto
+bindings:
+  transactionid: ToHashedUUID()
+  insertedtimestamp: AddHashRange(0,2419200000L); StartingEpochMillis('2025-01-01
+    05:00:00'); ToJavaInstant()
+  approvedamount: Add(1.0); ToBigDecimal()
+  authorizationcode: AlphaNumericString(10)
+  base24businessdate: AlphaNumericString(10)
+  isapproved: AddCycleRange(0,1); ToBoolean()
+  processingcode: AlphaNumericString(10)
+  responsecode: AlphaNumericString(10)
+blocks:
+  schema1:
+    params:
+      prepared: false
+    ops:
+      create_table1: 'CREATE TABLE if not exists <<keyspace:centralpayment>>.purchase_response_by_id
+        (
+
+        transactionid uuid,
+
+        insertedtimestamp timestamp,
+
+        approvedamount decimal,
+
+        authorizationcode text,
+
+        base24businessdate text,
+
+        isapproved boolean,
+
+        processingcode text,
+
+        responsecode text,
+
+        PRIMARY KEY (transactionid,insertedtimestamp)
+
+        ) WITH CLUSTERING ORDER BY (insertedtimestamp DESC);'
+  rampup1:
+    params:
+      cl: TEMPLATE(write_cl,LOCAL_QUORUM)
+      instrument: true
+      prepared: true
+    ops:
+      insert_rampup1: "insert into <<keyspace:centralpayment>>.purchase_response_by_id\
+        \ (\ntransactionid,\ninsertedtimestamp,\napprovedamount,\nauthorizationcode,\n\
+        base24businessdate,\nisapproved,\nprocessingcode,\nresponsecode\n) values\
+        \ \n(\n{transactionid},\n{insertedtimestamp},\n{approvedamount},\n{authorizationcode},\n\
+        {base24businessdate},\n{isapproved},\n{processingcode},\n{responsecode}\n\
+        );"

@@ -1,0 +1,33 @@
+scenarios:
+  default:
+    schema1: run driver=cql tags=block:"schema.*" threads===UNDEF cycles==UNDEF
+    rampup1: run driver=cql tags='block:rampup1' cycles===TEMPLATE(rampup-cycles,10000000)
+      threads=auto
+bindings:
+  sessionid: ToHashedUUID()
+  insertedtimestamp: AddHashRange(0,2419200000L); StartingEpochMillis('2025-01-01
+    05:00:00'); ToJavaInstant()
+blocks:
+  schema1:
+    params:
+      prepared: false
+    ops:
+      create_table1: 'CREATE TABLE if not exists <<keyspace:centralpayment>>.pay_with_app_reversal_request_by_id
+        (
+
+        sessionid uuid,
+
+        insertedtimestamp timestamp,
+
+        PRIMARY KEY (sessionid,insertedtimestamp)
+
+        ) WITH CLUSTERING ORDER BY (insertedtimestamp DESC);'
+  rampup1:
+    params:
+      cl: TEMPLATE(write_cl,LOCAL_QUORUM)
+      instrument: true
+      prepared: true
+    ops:
+      insert_rampup1: "insert into <<keyspace:centralpayment>>.pay_with_app_reversal_request_by_id\
+        \ (\nsessionid,\ninsertedtimestamp\n) values \n(\n{sessionid},\n{insertedtimestamp}\n\
+        );"

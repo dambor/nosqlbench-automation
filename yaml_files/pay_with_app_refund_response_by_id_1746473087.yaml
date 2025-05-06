@@ -1,0 +1,102 @@
+scenarios:
+  default:
+    schema1: run driver=cql tags=block:"schema.*" threads===UNDEF cycles==UNDEF
+    rampup1: run driver=cql tags='block:rampup1' cycles===TEMPLATE(rampup-cycles,10000000)
+      threads=auto
+bindings:
+  transactionreferenceid: AlphaNumericString(10)
+  insertedtimestamp: AddHashRange(0,2419200000L); StartingEpochMillis('2025-01-01
+    05:00:00'); ToJavaInstant()
+  approvedamount: Add(1.0); ToBigDecimal()
+  authorizationcode: AlphaNumericString(10)
+  cardbrand: AlphaNumericString(10)
+  cardfundingtype: AlphaNumericString(10)
+  edwtoken: AlphaNumericString(10)
+  errorcode: AlphaNumericString(10)
+  errormessage: AlphaNumericString(10)
+  errortype: AlphaNumericString(10)
+  giftcardremainingbalance: Add(1.0); ToBigDecimal()
+  isdigital: AddCycleRange(0,1); ToBoolean()
+  posreferencenumber: AlphaNumericString(10)
+  processedasfsa: AddCycleRange(0,1); ToBoolean()
+  requestedamount: Add(1.0); ToBigDecimal()
+  responsecode: Add(1); ToInt()
+  responsestatus: AlphaNumericString(10)
+  storenumber: AlphaNumericString(10)
+  tendertype: AlphaNumericString(10)
+  tracenumber: AlphaNumericString(10)
+  transactiondate: AddHashRange(0,2419200000L); StartingEpochMillis('2025-01-01 05:00:00');
+    ToJavaInstant()
+  truncatedcardnumber: AlphaNumericString(10)
+blocks:
+  schema1:
+    params:
+      prepared: false
+    ops:
+      create_table1: 'CREATE TABLE if not exists <<keyspace:centralpayment>>.pay_with_app_refund_response_by_id
+        (
+
+        transactionreferenceid text,
+
+        insertedtimestamp timestamp,
+
+        approvedamount decimal,
+
+        authorizationcode text,
+
+        cardbrand text,
+
+        cardfundingtype text,
+
+        edwtoken text,
+
+        errorcode text,
+
+        errormessage text,
+
+        errortype text,
+
+        giftcardremainingbalance decimal,
+
+        isdigital boolean,
+
+        posreferencenumber text,
+
+        processedasfsa boolean,
+
+        requestedamount decimal,
+
+        responsecode int,
+
+        responsestatus text,
+
+        storenumber text,
+
+        tendertype text,
+
+        tracenumber text,
+
+        transactiondate timestamp,
+
+        truncatedcardnumber text,
+
+        PRIMARY KEY (transactionreferenceid,insertedtimestamp)
+
+        ) WITH CLUSTERING ORDER BY (insertedtimestamp DESC);'
+  rampup1:
+    params:
+      cl: TEMPLATE(write_cl,LOCAL_QUORUM)
+      instrument: true
+      prepared: true
+    ops:
+      insert_rampup1: "insert into <<keyspace:centralpayment>>.pay_with_app_refund_response_by_id\
+        \ (\ntransactionreferenceid,\ninsertedtimestamp,\napprovedamount,\nauthorizationcode,\n\
+        cardbrand,\ncardfundingtype,\nedwtoken,\nerrorcode,\nerrormessage,\nerrortype,\n\
+        giftcardremainingbalance,\nisdigital,\nposreferencenumber,\nprocessedasfsa,\n\
+        requestedamount,\nresponsecode,\nresponsestatus,\nstorenumber,\ntendertype,\n\
+        tracenumber,\ntransactiondate,\ntruncatedcardnumber\n) values \n(\n{transactionreferenceid},\n\
+        {insertedtimestamp},\n{approvedamount},\n{authorizationcode},\n{cardbrand},\n\
+        {cardfundingtype},\n{edwtoken},\n{errorcode},\n{errormessage},\n{errortype},\n\
+        {giftcardremainingbalance},\n{isdigital},\n{posreferencenumber},\n{processedasfsa},\n\
+        {requestedamount},\n{responsecode},\n{responsestatus},\n{storenumber},\n{tendertype},\n\
+        {tracenumber},\n{transactiondate},\n{truncatedcardnumber}\n);"
